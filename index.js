@@ -1,45 +1,38 @@
-// Base API URL
-const API = 'https://olivera-backend-s5ul.onrender.com';
 
-/* ========================= FEATURES ========================= */
+const API = "https://olivera-backend-s5ul.onrender.com";
+
 function Handle_Features() {
-    const _featuresContainer = document.getElementById('Features');
-    if (!_featuresContainer) return;
+    let _features = document.getElementById('Features');
+
 
     fetch(`${API}/features`)
-        .then(res => res.json())
-        .then(features => {
-            _featuresContainer.innerHTML = ''; // Clear old content
+        .then((response) => response.json())
+        .then((_MyFeatures) => {
+            _MyFeatures.forEach((feature) => {
+                let _content = ` <i class="${feature.icon}"></i>
+                <h4><a href="" class="stretched-link">${feature.title}</a></h4>
+                <p>${feature.description}</p>`;
 
-            features.forEach(feature => {
-                const featureHTML = `
-                    <i class="${feature.icon}"></i>
-                    <h4><a href="#" class="stretched-link">${feature.title}</a></h4>
-                    <p>${feature.description}</p>
-                `;
-
-                const featureDiv = document.createElement('div');
-                featureDiv.className = 'col-md-6 icon-box position-relative';
-                featureDiv.innerHTML = featureHTML;
-
-                _featuresContainer.appendChild(featureDiv);
+                let _feature = document.createElement('div');
+                _feature.className = 'col-md-6 icon-box position-relative';
+                _feature.innerHTML = _content;
+                _features.appendChild(_feature);
             });
-        })
-        .catch(err => console.error('Error loading features:', err));
+        });
 }
 
-/* ========================= SERVICES ========================= */
+// Add Required Features
+Handle_Features();
+
 function Handle_Services() {
-    const _servicesContainer = document.getElementById('Services');
-    if (!_servicesContainer) return;
+    let _servicesContainer = document.getElementById('Services');
 
     fetch(`${API}/services`)
-        .then(res => res.json())
-        .then(services => {
-            _servicesContainer.innerHTML = ''; // Clear old content
+        .then((response) => response.json())
+        .then((_MyServices) => {
+            _MyServices.forEach((service) => {
 
-            services.forEach((service, index) => {
-                const serviceHTML = `
+                let _content = `
                     <div class="icon flex-shrink-0"><i class="${service.icon}"></i></div>
                     <div>
                         <h4 class="title">
@@ -49,65 +42,71 @@ function Handle_Services() {
                     </div>
                 `;
 
-                const serviceDiv = document.createElement('div');
-                serviceDiv.className = 'col-lg-4 col-md-6 service-item d-flex';
-                serviceDiv.setAttribute('data-aos', 'fade-up');
-                serviceDiv.setAttribute('data-aos-delay', service.delay || 100);
-                serviceDiv.innerHTML = serviceHTML;
+                let _serviceItem = document.createElement('div');
+                _serviceItem.className = 'col-lg-4 col-md-6 service-item d-flex';
+                _serviceItem.setAttribute('data-aos', 'fade-up');
+                _serviceItem.setAttribute('data-aos-delay', service.delay || 100);
 
-                _servicesContainer.appendChild(serviceDiv);
+                _serviceItem.innerHTML = _content;
+
+                _servicesContainer.appendChild(_serviceItem);
             });
-        })
-        .catch(err => console.error('Error loading services:', err));
+        });
 }
 
-/* ========================= PRICING ========================= */
+// Load services automatically
+Handle_Services();
+
 function Handle_Pricing() {
-    const _pricingContainer = document.querySelector('#pricing .row');
-    if (!_pricingContainer) return;
+    let _pricingContainer = document.querySelector('#pricing .row');
 
     fetch(`${API}/pricing`)
-        .then(res => res.json())
-        .then(plans => {
-            _pricingContainer.innerHTML = ''; // Clear old content
+        .then(response => response.json())
+        .then((_MyPricing) => {
+            _pricingContainer.innerHTML = ""; // Clear old content
 
-            plans.forEach((plan, index) => {
-                // Build features list
-                let featuresHTML = '';
-                if (plan.features && plan.features.length > 0) {
-                    featuresHTML = `
+            _MyPricing.forEach((pricing, index) => {
+
+                // Build features list HTML
+                let _featuresHTML = "";
+                if (pricing.features && pricing.features.length > 0) {
+                    _featuresHTML = `
                         <ul>
-                            ${plan.features.map(f => `<li><i class="bi bi-check"></i> <span>${f}</span></li>`).join('')}
+                            ${pricing.features.map(f => `<li><i class="bi bi-check"></i> <span>${f}</span></li>`).join('')}
                         </ul>
                     `;
                 }
 
-                const planHTML = `
-                    ${plan.featured ? `<p class="popular">${plan.label || 'Special Offer'}</p>` : ''}
-                    <h3>${plan.name}</h3>
-                    <p class="description">${plan.description}</p>
-                    <h4><sup>$</sup>${plan.price}<span> / ${plan.unit}</span></h4>
-                    ${featuresHTML}
-                    <a href="${plan.cta_link || '#'}" class="cta-btn">
-                        ${plan.cta_text || 'Buy Now'}
+                // Main content
+                let _content = `
+                    ${pricing.featured ? `<p class="popular">${pricing.label || 'Special Offer'}</p>` : ''}
+                    <h3>${pricing.name}</h3>
+                    <p class="description">${pricing.description}</p>
+                    <h4><sup>$</sup>${pricing.price}<span> / ${pricing.unit}</span></h4>
+
+                    ${_featuresHTML}
+
+                    <a href="${pricing.cta_link || '#'}" class="cta-btn">
+                        ${pricing.cta_text || 'Buy Now'}
                     </a>
                 `;
 
-                const planDiv = document.createElement('div');
-                planDiv.className = 'col-lg-4';
-                planDiv.setAttribute('data-aos', 'zoom-in');
-                planDiv.setAttribute('data-aos-delay', 100 * (index + 1));
-                planDiv.innerHTML = `<div class="pricing-item ${plan.featured ? 'featured' : ''}">${planHTML}</div>`;
+                let _pricingItem = document.createElement('div');
+                _pricingItem.className = 'col-lg-4';
+                _pricingItem.setAttribute('data-aos', 'zoom-in');
+                _pricingItem.setAttribute('data-aos-delay', 100 * (index + 1));
 
-                _pricingContainer.appendChild(planDiv);
+                _pricingItem.innerHTML = `
+                    <div class="pricing-item ${pricing.featured ? 'featured' : ''}">
+                        ${_content}
+                    </div>
+                `;
+
+                _pricingContainer.appendChild(_pricingItem);
             });
         })
-        .catch(err => console.error('Error loading pricing:', err));
+        .catch(err => console.error("Error loading pricing items:", err));
 }
 
-/* ========================= INIT ========================= */
-document.addEventListener('DOMContentLoaded', () => {
-    Handle_Features();
-    Handle_Services();
-    Handle_Pricing();
-});
+Handle_Pricing();
+
