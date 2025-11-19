@@ -110,3 +110,27 @@ function Handle_Pricing() {
 
 Handle_Pricing();
 
+function Handle_Contact() {
+    fetch(`${API}/contacts`)
+        .then(res => res.json())
+        .then(contacts => {
+            // find the selected contact
+            const selected = contacts.find(c => c.selected === true);
+
+            if (!selected) {
+                document.getElementById("contact-location").textContent = "Not set";
+                document.getElementById("contact-email").textContent = "Not set";
+                document.getElementById("contact-phone").textContent = "Not set";
+                return;
+            }
+
+            document.getElementById("contact-location").textContent = selected.location;
+            document.getElementById("contact-email").textContent = selected.email;
+            document.getElementById("contact-phone").textContent = selected.phone;
+        })
+        .catch(err => {
+            console.error("Failed to load contacts:", err);
+        });
+}
+
+Handle_Contact();
